@@ -11,3 +11,4 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 1.<a href="queue/src/lib.rs" alt="链接">烫手山芋</a>
 
 ## 双端队列
+1.<a href="deque/src/lib.rs" alt="链接">回文检测</a>

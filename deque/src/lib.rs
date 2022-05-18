@@ -57,4 +57,25 @@ pub mod foo {
             self.data.len()
         }
     }
+
+    /**
+     * 回文检测
+     */
+    pub fn pal_check(pal: &str) -> bool {
+        let mut d = Deque::new(pal.len());
+        for b in pal.as_bytes() {
+            d.add_rear(b);
+        }
+
+        let mut is_pal = true;
+        while d.size() > 1 && is_pal {
+            let front = d.remove_front().unwrap();
+            let rear = d.remove_rear().unwrap();
+            if front != rear {
+                is_pal = false
+            }
+        }
+
+        is_pal
+    }
 }
