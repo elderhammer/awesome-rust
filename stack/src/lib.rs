@@ -226,7 +226,7 @@ pub mod stack {
                     postfix.push(op_stack.pop().unwrap());
                 }
                 
-                postfix.push(token);
+                op_stack.push(token);
             }
         }
 
@@ -237,11 +237,55 @@ pub mod stack {
 
         // 生成后缀表达式
         let mut fix = "".to_string();
+        /**
+         * 
         while !postfix.is_empty() {
             // q有没有快捷办法生成字符串？a暂时没有
             fix += postfix.pop().unwrap();
+            fix += &" ".to_string();
+        }
+        */
+        for token in postfix {
+            fix += token;
+            fix += &" ".to_string();
         }
 
         Some(fix)
+    }
+
+    pub fn postfix_eval(postfix: &str) -> Option<i32> {
+        // 包含空格，一个合法的表达式必须有5个字符
+        if postfix.len() < 5 { return None; }
+
+        // 从左到右，计算
+        let mut op_stack = Stack::new();
+        for token in postfix.split_whitespace() {
+            if ("0" <= token && token <= "9") || ("A" <= token && token <= "Z") {
+                op_stack.push(token.parse::<i32>().unwrap()); // q不知道该怎么把&str转为i32类型 a&str有一个parse的方法可以用，返回结果是个Result
+            } else {
+                let op1 = op_stack.pop().unwrap();
+                let op2 = op_stack.pop().unwrap();
+                let op = do_cal(op1, op2, token);
+                op_stack.push(op);
+            }
+        }
+
+        Some(op_stack.pop().unwrap())
+    }
+
+    pub fn do_cal(op1: i32, op2: i32, op: &str) -> i32 {
+        match op {
+            "+" => op1 + op2,
+            "-" => op1 - op2, // q为什么不考虑位置？
+            "*" => op1 * op2,
+            "/" => {
+                if op2 == 0 {
+                    // q不知道要怎么报错 a使用panic!这个宏
+                    panic!("Error: divide by zero");
+                }
+                op1 / op2
+            },
+            _ => panic!("Error: unkown operation") // e忘了默认情况
+        }
     }
 }

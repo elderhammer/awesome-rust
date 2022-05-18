@@ -21,8 +21,41 @@ fn main() {
     println!("par {} is {:?}", par1, stack::par_checker(par1));
     */
 
+    /**
+     * 测试进制转换
     let ten = 10;
     println!("10(10) to {}(2)", stack::base_converter(ten, 2)); // q不可变标量作为可变入参，为什么不会报错类型不匹配？a因为标量实现了Copy这个trait，所以是不是自动shadowing？
     println!("10(10) to {}(8)", stack::base_converter(10, 8));
     println!("10(10) to {}(16)", stack::base_converter(10, 16));
+     */
+
+    /**
+     * 测试中缀转后缀
+    let infix = "( A + B ) / ( C - D ) * E";
+    let postfix = stack::infix_to_postfix(infix);
+    // if Some(postfix_str) = postfix { // q不熟模式匹配
+    //     println!("infix {} to postfix {}", infix, postfix_str);
+    // }
+    match postfix {
+        Some(val) => {
+            println!("infix: {infix} -> postfix: {val}");
+        },
+        None => {
+            println!("{infix} is not a corret infix string");
+        },
+    }
+    */
+
+    let infix = "( 1 + 2 ) * ( 3 - 4 )";
+    let postfix = stack::infix_to_postfix(infix).unwrap();
+    let res = stack::postfix_eval(&postfix);
+    match res {
+        Some(val) => {
+            println!("{} eq {}", infix, postfix);
+            println!("{} = {val}", infix);
+        },
+        None => {
+            println!("{infix} is not a corret infix string");
+        },
+    }
 }
