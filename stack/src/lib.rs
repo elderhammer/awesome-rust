@@ -8,20 +8,20 @@ pub mod stack {
 
     // 方法有new/push/pop/peek/is_empty/size
     impl<T> Stack<T> {
-        fn new() -> Self {
+        pub fn new() -> Self {
             Stack {
                 top: 0,
                 data: Vec::new()
             }
         }
 
-        fn push(&mut self, data: T) {
+        pub fn push(&mut self, data: T) {
             self.data.push(data);
             self.top += 1
         }
 
         // q不清楚该用Result还是Option
-        fn pop(&mut self) -> Option<T> {
+        pub fn pop(&mut self) -> Option<T> {
             // error没有考虑空的情况，考虑容器是否为空应该是个常规情况！
             if self.top == 0 { return None; }
 
@@ -31,7 +31,7 @@ pub mod stack {
 
         // q不知道要怎么取vec的元素，并且不持有所有权 a通过get方法
         // q不知道该返回引用还是新的一份拷贝 a考虑到泛型要实现Clone接口，还是返回引用吧
-        fn peek(&self) -> Option<&T> {
+        pub fn peek(&self) -> Option<&T> {
             /*
             let data = self.data.pop();
 
@@ -47,11 +47,11 @@ pub mod stack {
             self.data.get(self.top - 1)
         }
 
-        fn is_empty(&self) -> bool {
+        pub fn is_empty(&self) -> bool {
             self.top == 0
         }
 
-        fn size(&self) -> usize {
+        pub fn size(&self) -> usize {
             // q这样不会发生move吗？a会，但是因为usize已经实现了拷贝，所以尽管move
             self.top
         }
