@@ -177,4 +177,71 @@ pub mod stack {
 
         output
     }
+
+    /**
+     * 中缀转后缀
+     */
+    pub fn infix_to_postfix(infix: &str) -> Option<String> {
+        // 括号匹配检查
+        if !par_checker(infix) { return None; }
+
+        // 操作符优先级
+        let mut op_property = std::collections::HashMap::new();
+        /**
+         * e注意，单引号字符串类型是char，双引号字符串类型是&str
+        op_property.insert('(', 1);op_property.insert(')', 1);
+        op_property.insert('+', 2);op_property.insert('-', 2);
+        op_property.insert('*', 3);op_property.insert('/', 3);
+         */
+        op_property.insert("(", 1);op_property.insert(")", 1);
+        op_property.insert("+", 2);op_property.insert("-", 2);
+        op_property.insert("*", 3);op_property.insert("/", 3);
+
+        let mut op_stack = Stack::new();
+        let mut postfix = Vec::new();
+        // 从左到右处理中缀表达式
+        for token in infix.split_whitespace() { // q不清楚&str有没有按空白进行分隔的方法，也不知道返回值类型是什么 a有方法，叫split_whitespace，返回值类型是&str
+            // 如果是0-9或A-Z，则保持顺序，先进先出入队
+            if ("0" <= token && token <= "9") || ("A" <= token && token <= "Z") { // q不清楚如何进行范围比较 q2这里的范围比较原理是什么
+                postfix.push(token);
+            }
+            // 如果是左括号，则压栈（隐含存在更高优先级的操作符）
+            else if "(" == token {
+                op_stack.push(token);
+            }
+            // 如果是右括号，则最近操作符出栈入队
+            else if ")" == token {
+                let top = op_stack.pop().unwrap();
+                // 如果括号内存在操作符，则该操作符是当前优先级最高的操作符
+                if "(" != top {
+                    postfix.push(top);
+                    op_stack.pop();
+                }
+            }
+            // 接下来考虑没有括号来指示优先级的情况：如果栈内已有操作符，按照分析，要按照优先级越高约接近栈顶进行调整
+            else {
+                while !op_stack.is_empty() && (
+                    op_property[op_stack.peek().unwrap()] >= op_property[token] // q不清楚&str有没有to_char这个方法 a没有
+                ) {
+                    postfix.push(op_stack.pop().unwrap());
+                }
+                
+                postfix.push(token);
+            }
+        }
+
+        // 处理剩下的操作符
+        while !op_stack.is_empty() {
+            postfix.push(op_stack.pop().unwrap());
+        }
+
+        // 生成后缀表达式
+        let mut fix = "".to_string();
+        while !postfix.is_empty() {
+            // q有没有快捷办法生成字符串？a暂时没有
+            fix += postfix.pop().unwrap();
+        }
+
+        Some(fix)
+    }
 }
