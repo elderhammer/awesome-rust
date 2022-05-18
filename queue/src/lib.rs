@@ -1,4 +1,4 @@
-pub mod queue {
+pub mod foo {
     #[derive(Debug)]
     pub struct Queue<T> {
         cap: usize,
@@ -38,5 +38,30 @@ pub mod queue {
         pub fn size(&self) -> usize {
             self.data.len()
         }
+    }
+
+    /**
+     * 烫手山芋
+     */
+    pub fn hot_potato(names: Vec<&str>, num: i32) -> &str {
+        // 初始化队列
+        let mut queue = Queue::new(names.len());
+        for name in names {
+            queue.enqueue(name);
+        }
+
+        // 游戏
+        while queue.size() > 1 {
+            for i in 1..num {
+                let name = queue.dequeue().unwrap();
+                queue.enqueue(name);
+            }
+
+            // 手上有山芋的人淘汰
+            queue.dequeue();
+        }
+
+        // 最后一个人
+        queue.dequeue().unwrap()
     }
 }
