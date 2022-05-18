@@ -15,6 +15,14 @@ fn main() {
     println!("{:?}, size: {}", stack.pop().unwrap(), stack.size());
     */
 
+    /*
+     * 测试括号匹配
     let par1 = "(d(){}sd)";
     println!("par {} is {:?}", par1, stack::par_checker(par1));
+    */
+
+    let ten = 10;
+    println!("10(10) to {}(2)", stack::base_converter(ten, 2)); // q不可变标量作为可变入参，为什么不会报错类型不匹配？a因为标量实现了Copy这个trait，所以是不是自动shadowing？
+    println!("10(10) to {}(8)", stack::base_converter(10, 8));
+    println!("10(10) to {}(16)", stack::base_converter(10, 16));
 }

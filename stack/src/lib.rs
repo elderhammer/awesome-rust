@@ -118,4 +118,63 @@ pub mod stack {
         let closes = ")}]";
         opens.find(open) == closes.find(close)
     }
+
+    /**
+     * 进制转换
+     */
+    /**
+     * e返回类型不对
+    pub fn divide_by_two(input: mut u32) -> &str {
+     *
+     * e可变入参是mut在参数名之前
+    pub fn divide_by_two(input: mut u32) -> String {
+     */
+    pub fn divide_by_two(mut input: u32) -> String {
+        // 初始化栈
+        let mut stack: Stack<u32> = Stack::new();
+
+        // 迭代取模计算余数，入栈。q中断条件是什么？a因为input是整数类型，所以最后会得到小数并被转换为0
+        while input > 0 {
+            let diff = input % 2;
+            stack.push(diff);
+            input /= 2;
+        }
+
+        // 出栈输出二进制
+        let mut binary = "".to_string(); // q不知道字符串拼接该用String还是&str a因为不知道长度，所以用String
+        while !stack.is_empty() { // q还是那个问题，while的时候，删减容器元素会怎样？a容器是同一个
+            /**
+             * e没有注意返回类型
+            let data = stack.pop();
+             */
+            let data = stack.pop().unwrap().to_string();
+            binary += &data; // q对String类型取引用结果是&str？a在defer trait提到，&String需要的时候会自动解引用成&str
+        }
+
+        binary
+    }
+
+    pub fn base_converter(mut input: u32, base: u32) -> String {
+        // t注意，默认索引值的类型为usize
+        let digits = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']; // t元素类型为char
+        let digits = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]; // t元素类型为&str
+
+        let mut stack: Stack<u32> = Stack::new();
+
+        // 迭代取模
+        while input > 0 {
+            let data = input % base; // q取模运算的返回类型是什么？a返回u32
+            stack.push(data);
+            input /= base;
+        }
+
+        // 转换输出
+        let mut output = "".to_string();
+        while !stack.is_empty() {
+            let data = stack.pop().unwrap() as usize; // t这种用法头一次见
+            output += &digits[data].to_string(); // q为什么digits中的元素类型为char而不是&str？a看digits的注释
+        }
+
+        output
+    }
 }
