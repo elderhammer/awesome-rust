@@ -15,3 +15,6 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 
 ## 链表
 1.<a href="list/src/lib.rs" alt="链接">链表栈</a>
+
+## Vec
+1.<a href="lvec/src/lib.rs" alt="链接">Vec</a>
