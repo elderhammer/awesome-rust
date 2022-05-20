@@ -12,6 +12,15 @@ pub mod foo {
         next: NP<T> // q不熟悉怎么起别名 a用type
     }
 
+    impl<T> Node<T> {
+        pub fn new(val: T) -> Self {
+            Node {
+                data: val,
+                next: None
+            }
+        }
+    }
+
     #[derive(Debug)]
     pub struct List<T> {
         size: usize,
@@ -40,7 +49,7 @@ pub mod foo {
             let node = Box::new(Node {
                 data: item,
                 /**
-                 * q总是加到头部要怎么设置 a画图显示新节点next指向原head节点，head的类型是NP<T>，要利用Option的take取出Box指针（如果存在的话）
+                 * q总是加到头部要怎么设置 a画图显示新节点next指向原head节点，head的类型是NP<T>，要利用Option的take取出Box指针（如果存在的话），并留下空指针
                  * q不熟悉take()的用法 a如果是Some(val)，则返回Some(val)，并赋值None。入参是可变引用
                  */
                 next: self.head.take()
@@ -167,6 +176,7 @@ pub mod foo {
              * 首先，发生move是因为Option<&mut Node<T>>没有实现Copy trait，self.next的类型就是这个类型。
              */
             self.next.take().map(|node| { // q.这里为什么要take，Iter的实现为什么不用？a.因为按照引用规则，可变引用只能有一个
+                // a还有一个解释：在没有变量所有权的情况下，不能操作move！
                 self.next = node.next.as_deref_mut();
                 &mut node.data
             })
@@ -183,4 +193,85 @@ pub mod foo {
             }
         }
     }
+
+    /**
+     * 链表栈
+     */
+    #[derive(Debug, Clone)]
+    pub struct LNode<T> {
+        data: T,    
+        next: Link<T>, 
+    }
+
+    type Link<T> = Option<Box<LNode<T>>>;
+
+    impl<T> LNode<T> {
+        pub fn new(data: T) -> Self {
+            LNode {
+                data: data,
+                next: None
+            }
+        }
+    }
+
+
+    #[derive(Debug, Clone)]
+    pub struct Stack<T> {
+        size: usize,
+        // data: List<T> // e
+        top: Link<T>
+    }
+
+    impl<T: Clone> Stack<T> { // q.T: Clone意思要求T实现了Clone？
+        pub fn new() -> Self {
+            Stack {
+                size: 0,
+                top: None
+            }
+        }
+
+        // 压栈
+        pub fn push(&mut self, item: T) {
+            // t只有引用的情况下，不能操作move，所以要用take
+            let mut node = LNode::new(item);
+            node.next = self.top.take();
+            self.top = Some(Box::new(node));
+            self.size += 1;
+        }
+
+        // 栈顶元素出栈
+        pub fn pop(&mut self) -> Option<T> {
+            // let mut top = self.top.take();
+            // // 要考虑top是否为空指针的情况
+            // if let Some(node) = top.as_deref_mut() { // q.再次确定下as_deref返回的类型是什么？a.&mut Node<T>
+            //     self.top = node.next.take(); // 因为是引用，所以不能操作move
+            //     self.size -= 1;
+            //     return Some(node.data) // data是泛型，不一定实现了Copy，所以这里会因为对可变引用操作了move而报错
+            // }
+            // None
+
+            // 高级写法
+            self.top.take().map(|node| { // q.node是个Box<Node<T>>？a.对
+                let node = *node; // 解引用之后就是Node<T>
+                self.top = node.next;
+                self.size -= 1;
+                node.data
+            })
+        }
+
+        // 获取栈顶元素引用
+        pub fn peek(&self) -> Option<&T> {
+            self.top.as_ref().map(|node| { // node类型是&Box<Node<T>>
+                &node.data
+            })
+        }
+
+        pub fn is_empty(&self) -> bool {
+            0 == self.size
+        }
+        
+        pub fn size(&self) -> usize {
+            self.size
+        }
+    }   
 }

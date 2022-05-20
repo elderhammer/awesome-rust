@@ -1,6 +1,8 @@
 fn main() {
     println!("Hello, world!");
 
+    /**
+     * 测试链表
     fn basics() {
         let mut list = list::foo::List::new();
         list.push(1); list.push(2); list.push(3);
@@ -49,4 +51,15 @@ fn main() {
     into_iter();
     iter();
     iter_mut();
+     */
+
+    /**
+     * 测试链表栈
+     */
+    let mut s = list::foo::Stack::new();
+    s.push(1); s.push(2); s.push(4);
+
+    println!("top {:?}, size {}",s.peek().unwrap(), s.size());
+    println!("pop {:?}, size {}",s.pop().unwrap(), s.size());
+    println!("is_empty:{}, stack:{:?}", s.is_empty(), s);
 }
