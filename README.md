@@ -24,3 +24,7 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 2.<a href="rec/src/main.rs" alt="链接">汉诺塔</a><br>
 3.<a href="rec/src/main.rs" alt="链接">尾递归</a><br>
 4.<a href="rec/src/main.rs" alt="链接">动态规划找零</a>
+
+## 查找
+1.<a href="search/src/main.rs" alt="链接">二分查找</a><br>
+2.<a href="search/src/main.rs" alt="链接">哈希表</a><br>
