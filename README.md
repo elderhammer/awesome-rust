@@ -36,3 +36,7 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 3.<a href="sort/src/main.rs" alt="链接">难以置信算法（形似冒泡）</a><br>
 4.<a href="sort/src/main.rs" alt="链接">快速排序</a><br>
 5.<a href="sort/src/main.rs" alt="链接">插入排序</a><br>
+
+## 树
+1.<a href="tree/src/main.rs" alt="链接">二叉树</a><br>
+2.<a href="tree/src/main.rs" alt="链接">二叉堆</a><br>
