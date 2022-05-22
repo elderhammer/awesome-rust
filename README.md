@@ -1,5 +1,7 @@
 # Data Structure in Rust
 Rust实践，内容主要是基本数据结构和算法，以及一些实战。
+参考书籍：https://github.com/QMHTMY/RustBook
+（感谢作者Shieber）
 
 ## 基本数据结构
 ### 栈
