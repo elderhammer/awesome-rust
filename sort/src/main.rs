@@ -16,6 +16,14 @@ fn main() {
     let mut nums4 = [74,4,1846,474346,11,728,44];
     cantbelieveitcansort(&mut nums4);
     println!("cbic sort: {:?}", nums4);
+
+    /**
+     * 测试快排
+     */
+    let mut nums5 = [74,4,1846,474346,11,728,44];
+    let len = nums5.len();
+    quick_sort(&mut nums5, 0, (len - 1) as usize);
+    println!("quick sort: {:?}", nums5);
 }
 
 /**
@@ -117,4 +125,64 @@ fn cantbelieveitcansort(nums: &mut [i32]) {
             }
         }
     }
+}
+
+/**
+ * 快速排序：有自信的排序算法
+ * 
+ * 关键步骤：分而治之
+ * 1.分区
+ * 有左护法、右护法、中介，左右互相靠近并通过中介进行比较、交互指；
+ * 2.递归小分区
+ */
+
+fn quick_sort(nums: &mut [i32], left: usize, right: usize) { // 刚开始只有一个大分区，要切成两半
+    if left < right { // 说明数组长度大于1
+        // 一分为二，同时split上的元素已就位
+        let split = partition(nums, left, right);
+        // 处理左分区
+        if split > 1 {
+            quick_sort(nums, left, split - 1);
+        }
+        // 处理右分区
+        quick_sort(nums, split + 1, right);
+    }
+}
+
+fn partition(nums: &mut [i32], left: usize, right: usize) -> usize {
+    // 用分区的第一个元素作为中介
+    let split = left;
+
+    // 左右标记
+    let mut left_mark = left;
+    let mut right_mark = right;
+
+    /**
+     * 循环主要是两种情况：
+     * 1.左右标记互相靠近的过程中，发现了逆序的元素；
+     * 2.left_mark > right_mark，即左标记越过了右标记，
+     *  说明当前两个子区是“整体”有序的，左子区的元素都要小于等于中介，右子区的元素都要大于等于中介
+     *  此时，将r返回作为新的中介
+     */
+    loop {
+        // 左标记->
+        while left_mark <= right_mark && nums[left_mark] <= nums[split] {
+            left_mark += 1;
+        }
+
+        // <-右标记
+        while left_mark <= right_mark && nums[split] <= nums[right_mark] {
+            right_mark -= 1;
+        }
+
+        if left_mark <= right_mark {
+            nums.swap(left_mark, right_mark)
+        } else {
+            break;
+        }
+    }
+
+    nums.swap(split, right_mark);
+
+    right_mark
 }
