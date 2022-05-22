@@ -35,8 +35,27 @@ fn main() {
     bh.build_new(&nums);
     println!("size: {:?}", bh.len());
     println!("pop min: {:?}", bh.pop());
+
+    /**
+     * 测试BST
+     */
+    let mut bst: BSTree<i32, &str> = BSTree::new();
+    bst.insert(2, "foo");
+    bst.insert(1, "bar");
+    bst.insert(3, "far");
+    println!("bst: {:?}", bst);
+    println!("empty: {}", bst.is_empty());
+    println!("len: {}", bst.len());
+    println!("get: {}", *(bst.get(1).unwrap()));
+    println!("bst: {:?}", bst);
+    println!("search: {}", bst.search(4));
+    let (key, val) = bst.min();
+    println!("min: {} -> {}", *(key.unwrap()), *(val.unwrap()));
 }
 
+/**
+ * 二叉树
+ */
 #[derive(Debug, Clone)]
 struct BTree<T> {
     key: T,
@@ -288,32 +307,196 @@ impl BHeap {
     }
 }
 
-// /**
-//  * Todo：Box换成Rc
-//  * 读取以空格间隔的表达式
-//  */
-// fn read_exp(exp: &str) -> BTree<&str> {
-//     let ops: Vec<&str> = vec!["+","-","/","*"];
-//     let mut parent_stack: Vec<BTree<&str>> = Vec::new();
-//     let mut curr = BTree::new("");
-//     for c in exp.split_whitespace() {
-//         if "(" == c {
-//             let mut left = BTree::new("");
-//             curr.left = Some(Box::new(left));
-//             parent_stack.push(curr);
-//             curr = left;
-//         } else if "0" <= c && c <= "9" {
-//             curr.set_key(c);
-//             curr = parent_stack.pop().unwrap();
-//         } else if ops.contains(&c) {
-//             curr = parent_stack.pop().unwrap();
-//             curr.set_key(c);
-//             let mut right = BTree::new("");
-//             curr.right = Some(Box::new(right));
-//             parent_stack.push(curr);
-//             curr = right;
-//         } else {
-//             curr = parent_stack.pop().unwrap();
-//         }
-//     }
-// }
+/**
+ * BST
+ */
+#[derive(Debug)]
+struct BSTree<T, U> {
+    key: Option<T>,
+    val: Option<U>,
+    left: Pointer<T, U>,
+    right: Pointer<T, U>
+}
+
+type Pointer<T, U> = Option<Box<BSTree<T, U>>>;
+
+impl<T, U> BSTree<T, U>
+where // 老是以为where后面要跟冒号
+    T: Clone + std::fmt::Debug + Ord, // key要能支持比较
+    U: Clone + std::fmt::Debug
+{
+    fn new() -> Self {
+        BSTree {
+            key: None,
+            val: None,
+            left: None,
+            right: None
+        }
+    }
+
+    // 判断是否为空树
+    fn is_empty(&self) -> bool {
+        self.key.is_none()
+    }
+
+    // q.什么是树的长度？a.结点数
+    fn len(&self) -> u32 {
+        self.cal_node()
+    }
+
+    // 将调用者当做根节点，递归记算
+    fn cal_node(&self) -> u32 {
+        if self.is_empty() {
+            return 0;
+        }
+
+        let mut len = 1;
+
+        if self.has_left_child() {
+            len += self.left.as_ref().unwrap().cal_node();
+        }
+
+        if self.has_right_child() {
+            len += self.right.as_ref().unwrap().cal_node();
+        }
+
+        len
+    }
+
+    // fn preorder()
+    // fn inorder()
+    // fn postorder()
+
+    // 插入新元素
+    fn insert(&mut self, key: T, val: U) {
+        if self.is_empty() { // 空树直接插入
+            self.key = Some(key);
+            self.val = Some(val);
+        } else if *(self.key.as_ref().unwrap()) == key { // 如果是当前结点，则更新val
+            // q.这个比较要怎么写才优雅？
+            self.val = Some(val);
+        } else { // 找到合适的子树，递归insert
+            let curr_key = self.key.as_ref().unwrap();
+            if *curr_key > key {
+                // 递归左子树
+                if self.has_left_child() {
+                    self.left.as_mut().unwrap().insert(key, val);
+                } else { // 不存在的话，就要创建一个
+                    let mut left = BSTree::new();
+                    left.insert(key, val);
+                    self.left = Some(Box::new(left));
+                }
+            } else {
+                // 递归右子树
+                if self.has_right_child() {
+                    self.right.as_mut().unwrap().insert(key, val);
+                } else { // 不存在的话，就要创建一个
+                    let mut right = BSTree::new();
+                    right.insert(key, val);
+                    self.right = Some(Box::new(right));
+                }
+            }
+        }
+    }
+
+    // 获取结点的value
+    fn get(&self, key: T) -> Option<&U> {
+        if self.is_empty() {
+            None
+        } else if *(self.key.as_ref().unwrap()) == key {
+            Some(self.val.as_ref().unwrap())
+        } else {
+            let curr_key = self.key.as_ref().unwrap();
+            if *curr_key > key {
+                // 递归左子树
+                if self.has_left_child() {
+                    self.left.as_ref().unwrap().get(key)
+                } else {
+                    None
+                }
+            } else {
+                // 递归右子树
+                if self.has_right_child() {
+                    self.right.as_ref().unwrap().get(key)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
+    fn search(&self, key: T) -> bool {
+        self.get(key).is_some()
+    }
+
+    /**
+     * Todo：利用Rc来实现存储父结点指针
+     */
+    // fn remove(&mut self, key: T) -> Option<U> {
+    //     if self.is_empty() {
+    //         None
+    //     } else if *(self.key.as_ref().unwrap()) == key {
+    //         // 清理数据
+    //         self.key.take();
+    //         let val = self.val.take();
+
+    //         if self.has_left_child() || self.has_right_child() {
+    //             let mut change: &mut BSTree<T, U>;
+    //             if self.has_right_child() {
+    //                 // 有两个子节点，则右子树任意key必然大于左子树任意key，所以从右子树中找到最小结点，替换当前结点即可
+    //                 let mut right = self.right.as_mut().unwrap();
+    //                 change = right.min_node().unwrap();
+    //             } else {
+    //                 change = self.left.as_deref_mut().unwrap();
+    //             }
+    
+    //             // 转移
+    //             self.key = change.key.take();
+    //             self.val = change.val.take();
+    //             self.left = change.left.take();
+    //             self.right = change.right.take();
+    //         }
+
+    //         Some(val.unwrap())
+    //     } else {
+    //         None
+    //     }
+    // }
+
+    fn has_left_child(&self) -> bool {
+        self.left.is_some() && !self.left.as_ref().unwrap().is_empty()
+    }
+
+    fn has_right_child(&self) -> bool {
+        self.right.is_some() && !self.right.as_ref().unwrap().is_empty()
+    }
+
+    // 最小值在最左侧
+    fn min_node(&mut self) -> Option<&mut BSTree<T, U>> {
+        if self.has_left_child() {
+            self.left.as_mut().unwrap().min_node()
+        } else if !self.is_empty() {
+            Some(self)
+        } else {
+            None
+        }
+    }
+
+    // 最小值在最左侧
+    fn min(&self) -> (Option<&T>, Option<&U>) {
+        match &self.left {
+            Some(node) => node.min(),
+            None => match &self.key {
+                Some(key) => (Some(&key), self.val.as_ref()),
+                None => (None, None),
+            }
+        }
+    }
+
+    // 找到最大的kv、最小的kv
+    // fn max()
+    // fn min()
+
+    // 如何迭代一棵树?
+    // fn iter()
+}

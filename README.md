@@ -40,3 +40,4 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 ## 树
 1.<a href="tree/src/main.rs" alt="链接">二叉树</a><br>
 2.<a href="tree/src/main.rs" alt="链接">二叉堆</a><br>
+3.<a href="tree/src/main.rs" alt="链接">BST</a><br>
