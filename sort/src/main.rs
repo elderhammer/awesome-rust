@@ -24,6 +24,16 @@ fn main() {
     let len = nums5.len();
     quick_sort(&mut nums5, 0, (len - 1) as usize);
     println!("quick sort: {:?}", nums5);
+
+    /**
+     * 测试插入排序
+     */
+    let mut nums6 = [74,4,1846,474346,11,728,44];
+    insert_sort(&mut nums6);
+    println!("insert sort: {:?}", nums6);
+    let mut nums7 = [74,4,1846,474346,11,728,44];
+    binsert_sort(&mut nums7);
+    println!("binsert sort: {:?}", nums7);
 }
 
 /**
@@ -186,3 +196,64 @@ fn partition(nums: &mut [i32], left: usize, right: usize) -> usize {
 
     right_mark
 }
+
+/**
+ * 插入排序
+ */
+fn insert_sort(nums: &mut [i32]) {
+    for i in 1..nums.len() { // 从第二个元素开始
+        // i表示待就位的元素，它的位置可能会被取代，所以用临时变量记下来
+        let curr = nums[i];
+        let mut pos = i; // pos用来找合适位置的
+
+        /**
+         * 向左移动的条件：
+         * 1.直到碰到一个比curr小的元素；
+         * 2.pos不能越界，所以pos要大于0；
+         */
+        while pos > 0 && curr < nums[pos - 1] {
+            // 元素后移，准备给curr腾出位置
+            nums[pos] = nums[pos - 1];
+
+            pos -= 1; // 继续向左移动
+        }
+        nums[pos] = curr;
+    }
+}
+
+/**
+ * 插入排序（二分查找）
+ */
+fn binsert_sort(nums: &mut [i32]) {
+    // 用二分查找来确定位置
+    let mut left;
+    let mut mid;
+    let mut right;
+
+    for i in 1..nums.len() { // 从第二个元素开始
+        // i表示待就位的元素，它的位置可能会被取代，所以用临时变量记下来
+        let curr = nums[i];
+
+        left = 0;
+        right = i - 1;
+        while left <= right {
+            mid = left + ((right - left) >> 1);
+            if curr < nums[mid] {
+                if 0 == mid {break;}
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        // 挪位置
+        for j in (left..=i-1).rev() {
+            nums.swap(j, j+1);
+        }
+
+        if left != i {
+            nums[left] = curr;
+        }
+    }
+}
+
