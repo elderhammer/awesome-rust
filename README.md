@@ -32,5 +32,5 @@ Rust实践，内容主要是基本数据结构和算法，以及一些实战。
 
 ## 排序
 1.<a href="sort/src/main.rs" alt="链接">冒泡</a><br>
-2.<a href="sort/src/main.rs" alt="链接">鸡尾酒（冒泡变体）</a><br>
+2.<a href="sort/src/main.rs" alt="链接">鸡尾酒（双向冒泡）</a><br>
 3.<a href="sort/src/main.rs" alt="链接">难以置信算法（形似冒泡）</a><br>
