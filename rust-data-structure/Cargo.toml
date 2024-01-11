@@ -1,5 +1,5 @@
 [package]
-name = "RustDataStructure"
+name = "rust_data_structure"
 version = "0.1.0"
 edition = "2021"
 
